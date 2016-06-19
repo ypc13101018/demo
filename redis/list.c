@@ -132,8 +132,68 @@ ListIter *ListGetIterator(List *list, int direction)
 
 	if ((iter = (ListIter *)malloc(sizeof(ListIter))) == NULL)
 		return NULL;
-	if (direction == )
+	if (direction == AL_START_HEAD)
 	{
-	
+		iter->next = list->head;
 	}
+	else
+	{
+		iter->next = list->tail;
+	}
+
+	iter->direction = direction;
+	return iter;
+}
+
+void ListReleaseIterator(ListIter *iter)
+{
+	free(iter);
+}
+
+void ListRewind(List *list, ListIter *li)
+{
+	if((list == NULL)||(li == NULL))
+		return ;
+	li->next = list->head;
+	li->direction = AL_START_HEAD;
+}
+
+void ListRewindTail(List *list,ListIter *li) 
+{
+	li->next = list->tail;
+	li->direction = AL_START_TAIL;
+}
+
+ListNode *ListNext(ListIter *iter)
+{
+	ListNode *node = iter->next;
+	if (node != NULL)
+	{
+		if (iter->direction ==  AL_START_HEAD)
+		{
+			iter->next = node->next;	
+		}
+		else{
+			iter->next = node->prev;	
+		}
+	}
+	return node;
+}
+
+ListNode *ListSearchKey(List *list, void *value)
+{
+	ListIter *iter;
+	ListNdoe *node;
+	iter = ListGetIterator(list, AL_START_HEAD);
+	while((node = IterNext(iter)) == NULL)
+	{
+		if (value == node->value)
+		{
+			ListReleaseIterator(iter);
+			return node;
+		}
+	}
+	
+	ListReleaseIterator(iter);
+	return NULL;
 }
